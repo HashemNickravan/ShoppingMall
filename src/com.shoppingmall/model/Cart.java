@@ -19,4 +19,20 @@ public class Cart {
     public List<CartItem> getItems() {
         return items;
     }
+
+    public void addItem(CartItem newItem) {
+        for (CartItem item : items) {
+            if (item.getProduct().getId().equals(newItem.getProduct().getId())) {
+                item.setQuantity(item.getQuantity() + newItem.getQuantity());
+                return;
+            }
+        }
+        items.add(newItem);
+    }
+
+    public void removeItem(String productId) {
+        items.removeIf(item ->
+                item.getProduct().getId().equals(productId));
+    }
+
 }
