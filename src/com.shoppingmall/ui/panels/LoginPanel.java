@@ -37,10 +37,14 @@ public class LoginPanel extends JPanel {
     }
 
     private void login() {
-        User user = authService.login(
-                usernameField.getText().trim(),
-                new String(passwordField.getPassword())
-        );
-        listener.onLoginSuccess(user);
+        try {
+            User user = authService.login(
+                    usernameField.getText().trim(),
+                    new String(passwordField.getPassword())
+            );
+            listener.onLoginSuccess(user);
+        } catch (RuntimeException ex) {
+            JOptionPane.showMessageDialog(this, ex.getMessage());
+        }
     }
 }
