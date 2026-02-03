@@ -6,7 +6,7 @@ import java.util.Map;
 public class Cart {
 
     private String userId;
-    private Map<Product, Integer> items = new HashMap<>();
+    private Map<String, Integer> items = new HashMap<>();
 
     public Cart(String userId) {
         this.userId = userId;
@@ -16,20 +16,20 @@ public class Cart {
         return userId;
     }
 
-    public Map<Product, Integer> getItems() {
+    public Map<String, Integer> getItems() {
         return items;
     }
 
-    public void addItem(Product product, int quantity) {
-        items.put(product, items.getOrDefault(product, 0) + quantity);
+    public void addItem(String productId, int quantity) {
+        items.put(productId, items.getOrDefault(productId, 0) + quantity);
     }
 
-    public void setQuantity(Product product, int quantity) {
-        items.put(product, quantity);
+    public void setQuantity(String productId, int quantity) {
+        items.put(productId, quantity);
     }
 
-    public void removeItem(Product product) {
-        items.remove(product);
+    public void removeItem(String productId) {
+        items.remove(productId);
     }
 
     public void clear() {

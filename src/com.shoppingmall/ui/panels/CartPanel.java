@@ -2,6 +2,7 @@ package com.shoppingmall.ui.panels;
 
 import com.shoppingmall.model.Cart;
 import com.shoppingmall.model.Product;
+import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.service.CartService;
 
 import javax.swing.*;
@@ -13,6 +14,7 @@ import java.util.Map;
 public class CartPanel extends JPanel {
 
     private final CartService cartService;
+    private final ProductRepository productRepository;
     private final String userId;
 
     private JTable table;
@@ -21,9 +23,13 @@ public class CartPanel extends JPanel {
     private JButton plusBtn;
     private JButton checkoutBtn;
 
-    public CartPanel(String userId, CartService cartService) {
+    public CartPanel(String userId,
+                     CartService cartService,
+                     ProductRepository productRepository) {
+
         this.userId = userId;
         this.cartService = cartService;
+        this.productRepository = productRepository;
 
         setLayout(new BorderLayout());
 
@@ -70,11 +76,15 @@ public class CartPanel extends JPanel {
 
         double total = 0;
 
-        for (Map.Entry<Product, Integer> e : cart.getItems().entrySet()) {
-            Product p = e.getKey();
-            int q = e.getValue();
-            double sub = p.getPrice() * q;
-            model.addRow(new Object[]{p, p.getPrice(), q, sub});
+        for (Map.Entry<String, Integer> e : cart.getItems().entrySet()) {
+            String productId = e.getKey();
+            int qty = e.getValue();
+
+            Product product = productRepository.findById(productId).orElse(null);
+            if (product == null) continue;
+
+            double sub = product.getPrice() * qty;
+            model.addRow(new Object[]{product, product.getPrice(), qty, sub});
             total += sub;
         }
 
@@ -108,8 +118,7 @@ public class CartPanel extends JPanel {
     }
 
     private void formatNumbers() {
-        DefaultTableCellRenderer right =
-                new DefaultTableCellRenderer();
+        DefaultTableCellRenderer right = new DefaultTableCellRenderer();
         right.setHorizontalAlignment(SwingConstants.RIGHT);
 
         table.getColumnModel().getColumn(1).setCellRenderer(right);

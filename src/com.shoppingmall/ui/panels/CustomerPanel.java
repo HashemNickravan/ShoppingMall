@@ -2,6 +2,7 @@ package com.shoppingmall.ui.panels;
 
 import com.shoppingmall.model.Customer;
 import com.shoppingmall.model.User;
+import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.service.CartService;
 import com.shoppingmall.service.ProductService;
 
@@ -12,7 +13,8 @@ public class CustomerPanel extends JPanel {
 
     public CustomerPanel(User user,
                          ProductService productService,
-                         CartService cartService) {
+                         CartService cartService,
+                         ProductRepository productRepository) {
 
         setLayout(new BorderLayout());
 
@@ -32,7 +34,8 @@ public class CustomerPanel extends JPanel {
 
         CartPanel cartPanel = new CartPanel(
                 ((Customer) user).getId(),
-                cartService
+                cartService,
+                productRepository
         );
         add(cartPanel, BorderLayout.SOUTH);
     }

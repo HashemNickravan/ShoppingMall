@@ -55,15 +55,9 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
         }
 
         if (productService.getAllProducts().isEmpty()) {
-            productService.addProduct(
-                    new Product("1", "Laptop", 45000, 10, null)
-            );
-            productService.addProduct(
-                    new Product("2", "Mouse", 500, 50, null)
-            );
-            productService.addProduct(
-                    new Product("3", "Keyboard", 1200, 30, null)
-            );
+            productService.addProduct(new Product("1", "Laptop", 45000, 10, null));
+            productService.addProduct(new Product("2", "Mouse", 500, 50, null));
+            productService.addProduct(new Product("3", "Keyboard", 1200, 30, null));
         }
 
         LoginPanel loginPanel = new LoginPanel(authService, this);
@@ -89,7 +83,12 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
 
         } else {
             CustomerPanel customerPanel =
-                    new CustomerPanel(user, productService, cartService);
+                    new CustomerPanel(
+                            user,
+                            productService,
+                            cartService,
+                            productRepository
+                    );
 
             add(customerPanel, "CUSTOMER");
             cardLayout.show(getContentPane(), "CUSTOMER");

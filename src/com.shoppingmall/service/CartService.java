@@ -23,29 +23,27 @@ public class CartService {
 
     public void addToCart(String userId, Product product, int quantity) {
         Cart cart = getCartByUserId(userId);
-        cart.addItem(product, quantity);
+        cart.addItem(product.getId(), quantity);
         cartRepository.save(cart);
     }
 
     public void updateQuantity(String userId, Product product, int quantity) {
         Cart cart = getCartByUserId(userId);
         if (quantity <= 0) {
-            cart.removeItem(product);
+            cart.removeItem(product.getId());
         } else {
-            cart.setQuantity(product, quantity);
+            cart.setQuantity(product.getId(), quantity);
         }
         cartRepository.save(cart);
     }
 
     public void removeFromCart(String userId, Product product) {
         Cart cart = getCartByUserId(userId);
-        cart.removeItem(product);
+        cart.removeItem(product.getId());
         cartRepository.save(cart);
     }
 
     public void clearCart(String userId) {
-        Cart cart = getCartByUserId(userId);
-        cart.clear();
-        cartRepository.save(cart);
+        cartRepository.deleteByUserId(userId);
     }
 }
