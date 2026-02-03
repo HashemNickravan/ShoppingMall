@@ -18,7 +18,9 @@ public class Order {
     }
 
     public double getTotalPrice() {
-        return items.stream().mapToDouble(OrderItem::getTotalPrice).sum();
+        return items.stream()
+                .mapToDouble(OrderItem::getTotalPrice)
+                .sum();
     }
 
     public int getId() {
