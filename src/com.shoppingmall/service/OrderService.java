@@ -2,28 +2,26 @@ package com.shoppingmall.service;
 
 import com.shoppingmall.model.Order;
 import com.shoppingmall.model.OrderItem;
+import com.shoppingmall.repository.OrderRepository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OrderService {
 
-    private final List<Order> orders = new ArrayList<>();
+    private final OrderRepository orderRepository;
     private int nextId = 1;
+
+    public OrderService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
 
     public Order createOrder(String username, List<OrderItem> items) {
         Order order = new Order(nextId++, username, items);
-        orders.add(order);
+        orderRepository.save(order);
         return order;
     }
 
     public List<Order> getOrdersByUser(String username) {
-        List<Order> result = new ArrayList<>();
-        for (Order o : orders) {
-            if (o.getUsername().equals(username)) {
-                result.add(o);
-            }
-        }
-        return result;
+        return orderRepository.findByUsername(username);
     }
 }

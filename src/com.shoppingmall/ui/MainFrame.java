@@ -5,9 +5,11 @@ import com.shoppingmall.model.User;
 import com.shoppingmall.repository.CartRepository;
 import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.repository.UserRepository;
+import com.shoppingmall.repository.OrderRepository;
 import com.shoppingmall.repository.impl.InMemoryCartRepository;
 import com.shoppingmall.repository.impl.InMemoryProductRepository;
 import com.shoppingmall.repository.impl.InMemoryUserRepository;
+import com.shoppingmall.repository.impl.InMemoryOrderRepository;
 import com.shoppingmall.service.AuthService;
 import com.shoppingmall.service.CartService;
 import com.shoppingmall.service.OrderService;
@@ -35,11 +37,12 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
         UserRepository userRepository = new InMemoryUserRepository();
         productRepository = new InMemoryProductRepository();
         CartRepository cartRepository = new InMemoryCartRepository();
+        OrderRepository orderRepository = new InMemoryOrderRepository();
 
         authService = new AuthService(userRepository);
         productService = new ProductService(productRepository);
         cartService = new CartService(cartRepository);
-        orderService = new OrderService();
+        orderService = new OrderService(orderRepository);
 
         cardLayout = new CardLayout();
         setLayout(cardLayout);
@@ -56,12 +59,13 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
     @Override
     public void onLoginSuccess(User user) {
         if (user.getRole() == Role.ADMIN) {
-            AdminPanel adminPanel =
-                    new AdminPanel(user, productService);
-            add(adminPanel, "ADMIN");
+            add(
+                    new AdminPanel(user, productService),
+                    "ADMIN"
+            );
             cardLayout.show(getContentPane(), "ADMIN");
         } else {
-            CustomerPanel customerPanel =
+            add(
                     new CustomerPanel(
                             user,
                             productService,
@@ -69,8 +73,9 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
                             productRepository,
                             authService,
                             orderService
-                    );
-            add(customerPanel, "CUSTOMER");
+                    ),
+                    "CUSTOMER"
+            );
             cardLayout.show(getContentPane(), "CUSTOMER");
         }
     }

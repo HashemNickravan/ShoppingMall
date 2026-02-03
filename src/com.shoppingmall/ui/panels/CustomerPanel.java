@@ -21,28 +21,43 @@ public class CustomerPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        JLabel header = new JLabel(
-                "Customer Dashboard - " + user.getUsername(),
-                SwingConstants.CENTER
-        );
+        JLabel header =
+                new JLabel(
+                        "Customer Dashboard - " + user.getUsername(),
+                        SwingConstants.CENTER
+                );
         add(header, BorderLayout.NORTH);
 
-        ProductListPanel productListPanel =
+        JTabbedPane tabs = new JTabbedPane();
+
+        tabs.add(
+                "Products",
                 new ProductListPanel(
                         productService,
                         cartService,
                         user
-                );
-        add(productListPanel, BorderLayout.CENTER);
+                )
+        );
 
-        CartPanel cartPanel =
+        tabs.add(
+                "Cart",
                 new CartPanel(
                         cartService,
                         productRepository,
                         authService,
                         orderService,
                         user.getId()
-                );
-        add(cartPanel, BorderLayout.SOUTH);
+                )
+        );
+
+        tabs.add(
+                "Orders",
+                new OrderHistoryPanel(
+                        authService,
+                        orderService
+                )
+        );
+
+        add(tabs, BorderLayout.CENTER);
     }
 }
