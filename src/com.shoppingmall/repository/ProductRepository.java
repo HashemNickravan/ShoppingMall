@@ -1,7 +1,6 @@
 package com.shoppingmall.repository;
 
 import com.shoppingmall.model.Product;
-
 import java.util.List;
 import java.util.Optional;
 

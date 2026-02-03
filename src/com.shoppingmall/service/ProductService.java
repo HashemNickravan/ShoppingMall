@@ -4,6 +4,7 @@ import com.shoppingmall.model.Product;
 import com.shoppingmall.repository.ProductRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 public class ProductService {
 
@@ -13,19 +14,26 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public void addProduct(Product product) {
-        productRepository.save(product);
-    }
-
     public List<Product> getAllProducts() {
         return productRepository.findAll();
     }
 
-    public Product getById(String id) {
-        return productRepository.findById(id)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Product not found: " + id));
+    public void addProduct(String name, long price, int stock) {
+        Product product = new Product(
+                UUID.randomUUID().toString(),
+                name,
+                price,
+                stock,
+                null
+        );
+        productRepository.save(product);
     }
 
+    public void updateProduct(Product product) {
+        productRepository.save(product);
+    }
 
+    public void deleteProduct(String productId) {
+        productRepository.deleteById(productId);
+    }
 }

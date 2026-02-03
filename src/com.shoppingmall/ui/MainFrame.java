@@ -1,7 +1,5 @@
 package com.shoppingmall.ui;
 
-import com.shoppingmall.model.Admin;
-import com.shoppingmall.model.Product;
 import com.shoppingmall.model.Role;
 import com.shoppingmall.model.User;
 import com.shoppingmall.repository.CartRepository;
@@ -57,9 +55,9 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
         }
 
         if (productService.getAllProducts().isEmpty()) {
-            productService.addProduct(new Product("1", "Laptop", 45000, 10, null));
-            productService.addProduct(new Product("2", "Mouse", 500, 50, null));
-            productService.addProduct(new Product("3", "Keyboard", 1200, 30, null));
+            productService.addProduct("Laptop", 45000, 10);
+            productService.addProduct("Mouse", 500, 50);
+            productService.addProduct("Keyboard", 1200, 30);
         }
 
         LoginPanel loginPanel = new LoginPanel(authService, this);
@@ -73,7 +71,7 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
 
         if (user.getRole() == Role.ADMIN) {
             AdminPanel adminPanel =
-                    new AdminPanel((Admin) user, productService);
+                    new AdminPanel(user, productService);
 
             add(adminPanel, "ADMIN");
             cardLayout.show(getContentPane(), "ADMIN");

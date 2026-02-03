@@ -1,7 +1,6 @@
 package com.shoppingmall.service;
 
 import com.shoppingmall.model.Cart;
-import com.shoppingmall.model.Product;
 import com.shoppingmall.repository.CartRepository;
 
 public class CartService {
@@ -21,25 +20,25 @@ public class CartService {
                 });
     }
 
-    public void addToCart(String userId, Product product, int quantity) {
+    public void addToCart(String userId, String productId, int quantity) {
         Cart cart = getCartByUserId(userId);
-        cart.addItem(product.getId(), quantity);
+        cart.addItem(productId, quantity);
         cartRepository.save(cart);
     }
 
-    public void updateQuantity(String userId, Product product, int quantity) {
+    public void updateQuantity(String userId, String productId, int quantity) {
         Cart cart = getCartByUserId(userId);
         if (quantity <= 0) {
-            cart.removeItem(product.getId());
+            cart.removeItem(productId);
         } else {
-            cart.setQuantity(product.getId(), quantity);
+            cart.setQuantity(productId, quantity);
         }
         cartRepository.save(cart);
     }
 
-    public void removeFromCart(String userId, Product product) {
+    public void removeFromCart(String userId, String productId) {
         Cart cart = getCartByUserId(userId);
-        cart.removeItem(product.getId());
+        cart.removeItem(productId);
         cartRepository.save(cart);
     }
 

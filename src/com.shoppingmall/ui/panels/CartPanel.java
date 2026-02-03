@@ -100,7 +100,7 @@ public class CartPanel extends JPanel {
 
         Product product = (Product) table.getValueAt(row, 0);
         int qty = (int) table.getValueAt(row, 2);
-        cartService.updateQuantity(userId, product, qty + delta);
+        cartService.updateQuantity(userId, String.valueOf(product), qty + delta);
         refresh();
     }
 

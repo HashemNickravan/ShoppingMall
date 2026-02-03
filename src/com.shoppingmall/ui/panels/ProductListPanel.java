@@ -1,7 +1,7 @@
 package com.shoppingmall.ui.panels;
 
-import com.shoppingmall.model.Customer;
 import com.shoppingmall.model.Product;
+import com.shoppingmall.model.User;
 import com.shoppingmall.service.CartService;
 import com.shoppingmall.service.ProductService;
 
@@ -13,14 +13,14 @@ public class ProductListPanel extends JPanel {
 
     private final ProductService productService;
     private final CartService cartService;
-    private final Customer customer;
+    private final User customer;
 
     private JTable table;
     private DefaultTableModel tableModel;
 
     public ProductListPanel(ProductService productService,
                             CartService cartService,
-                            Customer customer) {
+                            User customer) {
 
         this.productService = productService;
         this.cartService = cartService;
@@ -52,10 +52,7 @@ public class ProductListPanel extends JPanel {
             String productId =
                     tableModel.getValueAt(selectedRow, 0).toString();
 
-            Product product =
-                    productService.getById(productId);
-
-            cartService.addToCart(customer.getId(), product, 1);
+            cartService.addToCart(customer.getId(), productId, 1);
 
             JOptionPane.showMessageDialog(this, "Added to cart");
         });
