@@ -19,6 +19,9 @@ public class User {
     public User(String id, String username, String password, String admin) {
     }
 
+    public User(String username, String password, Role role, int i) {
+    }
+
     public String getId() { return id; }
     public String getUsername() { return username; }
     public String getPassword() { return password; }

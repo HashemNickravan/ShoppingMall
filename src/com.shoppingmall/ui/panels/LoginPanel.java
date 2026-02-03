@@ -10,67 +10,37 @@ import java.awt.*;
 public class LoginPanel extends JPanel {
 
     private final AuthService authService;
-    private final JTextField usernameField;
-    private final JPasswordField passwordField;
     private final LoginSuccessListener listener;
+
+    private JTextField usernameField;
+    private JPasswordField passwordField;
 
     public LoginPanel(AuthService authService, LoginSuccessListener listener) {
         this.authService = authService;
         this.listener = listener;
 
-        setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        setLayout(new GridLayout(3, 2));
 
-        JLabel title = new JLabel("Login", SwingConstants.CENTER);
-        title.setFont(new Font("Arial", Font.BOLD, 20));
-
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        add(title, gbc);
-
-        gbc.gridwidth = 1;
-        gbc.gridy++;
-        add(new JLabel("Username:"), gbc);
-
-        gbc.gridx = 1;
-        usernameField = new JTextField(15);
-        add(usernameField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        add(new JLabel("Password:"), gbc);
-
-        gbc.gridx = 1;
-        passwordField = new JPasswordField(15);
-        add(passwordField, gbc);
-
-        gbc.gridx = 0;
-        gbc.gridy++;
-        gbc.gridwidth = 2;
+        usernameField = new JTextField();
+        passwordField = new JPasswordField();
 
         JButton loginButton = new JButton("Login");
-        add(loginButton, gbc);
+
+        add(new JLabel("Username"));
+        add(usernameField);
+        add(new JLabel("Password"));
+        add(passwordField);
+        add(new JLabel());
+        add(loginButton);
 
         loginButton.addActionListener(e -> login());
     }
 
     private void login() {
-        try {
-            User user = authService.login(
-                    usernameField.getText().trim(),
-                    new String(passwordField.getPassword())
-            );
-            listener.onLoginSuccess(user);
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    ex.getMessage(),
-                    "Login Failed",
-                    JOptionPane.ERROR_MESSAGE
-            );
-        }
+        User user = authService.login(
+                usernameField.getText().trim(),
+                new String(passwordField.getPassword())
+        );
+        listener.onLoginSuccess(user);
     }
 }

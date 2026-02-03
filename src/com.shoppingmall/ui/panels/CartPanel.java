@@ -1,128 +1,101 @@
 package com.shoppingmall.ui.panels;
 
 import com.shoppingmall.model.Cart;
+import com.shoppingmall.model.OrderItem;
 import com.shoppingmall.model.Product;
 import com.shoppingmall.repository.ProductRepository;
+import com.shoppingmall.service.AuthService;
 import com.shoppingmall.service.CartService;
+import com.shoppingmall.service.OrderService;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.Map;
+import java.util.*;
+import java.util.List;
 
 public class CartPanel extends JPanel {
 
     private final CartService cartService;
     private final ProductRepository productRepository;
+    private final AuthService authService;
     private final String userId;
 
-    private JTable table;
-    private JLabel totalLabel;
-    private JButton minusBtn;
-    private JButton plusBtn;
-    private JButton checkoutBtn;
+    private final JTable table;
+    private final DefaultTableModel tableModel;
+    private final JLabel totalLabel;
 
-    public CartPanel(String userId,
-                     CartService cartService,
-                     ProductRepository productRepository) {
+    public CartPanel(CartService cartService,
+                     ProductRepository productRepository,
+                     AuthService authService,
+                     String userId) {
 
-        this.userId = userId;
         this.cartService = cartService;
         this.productRepository = productRepository;
+        this.authService = authService;
+        this.userId = userId;
 
         setLayout(new BorderLayout());
 
-        table = new JTable();
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tableModel = new DefaultTableModel(
+                new Object[]{"Product", "Price", "Qty", "Total"}, 0
+        );
+        table = new JTable(tableModel);
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel bottom = new JPanel(new BorderLayout());
+        totalLabel = new JLabel("Total: 0 Toman");
 
-        JPanel buttons = new JPanel();
-        minusBtn = new JButton("-");
-        plusBtn = new JButton("+");
-        checkoutBtn = new JButton("Checkout");
-
-        buttons.add(minusBtn);
-        buttons.add(plusBtn);
-        buttons.add(checkoutBtn);
-
-        totalLabel = new JLabel("Total: 0");
-        totalLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-
-        bottom.add(buttons, BorderLayout.WEST);
-        bottom.add(totalLabel, BorderLayout.EAST);
-        add(bottom, BorderLayout.SOUTH);
-
-        minusBtn.addActionListener(e -> changeQty(-1));
-        plusBtn.addActionListener(e -> changeQty(1));
+        JButton checkoutBtn = new JButton("Checkout");
         checkoutBtn.addActionListener(e -> checkout());
 
-        table.getSelectionModel().addListSelectionListener(e -> updateButtons());
+        bottom.add(totalLabel, BorderLayout.WEST);
+        bottom.add(checkoutBtn, BorderLayout.EAST);
+        add(bottom, BorderLayout.SOUTH);
 
         refresh();
     }
 
-    public void refresh() {
+    private void refresh() {
+        tableModel.setRowCount(0);
         Cart cart = cartService.getCartByUserId(userId);
-
-        DefaultTableModel model =
-                new DefaultTableModel(new Object[]{"Product", "Price", "Qty", "Subtotal"}, 0) {
-                    public boolean isCellEditable(int r, int c) {
-                        return false;
-                    }
-                };
-
         double total = 0;
 
         for (Map.Entry<String, Integer> e : cart.getItems().entrySet()) {
-            String productId = e.getKey();
-            int qty = e.getValue();
-
-            Product product = productRepository.findById(productId).orElse(null);
-            if (product == null) continue;
-
-            double sub = product.getPrice() * qty;
-            model.addRow(new Object[]{product, product.getPrice(), qty, sub});
-            total += sub;
+            Product p = productRepository.findById(e.getKey()).orElse(null);
+            if (p != null) {
+                double subtotal = p.getPrice() * e.getValue();
+                total += subtotal;
+                tableModel.addRow(
+                        new Object[]{p.getName(), p.getPrice(), e.getValue(), subtotal}
+                );
+            }
         }
-
-        table.setModel(model);
-        formatNumbers();
-        totalLabel.setText("Total: " + String.format("%.2f", total));
-        updateButtons();
-    }
-
-    private void changeQty(int delta) {
-        int row = table.getSelectedRow();
-        if (row == -1) return;
-
-        Product product = (Product) table.getValueAt(row, 0);
-        int qty = (int) table.getValueAt(row, 2);
-        cartService.updateQuantity(userId, String.valueOf(product), qty + delta);
-        refresh();
+        totalLabel.setText("Total: " + total + " Toman");
     }
 
     private void checkout() {
+        Cart cart = cartService.getCartByUserId(userId);
+        if (cart.getItems().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Cart is empty");
+            return;
+        }
+
+        List<OrderItem> items = new ArrayList<>();
+        for (Map.Entry<String, Integer> e : cart.getItems().entrySet()) {
+            Product p = productRepository.findById(e.getKey()).orElse(null);
+            if (p != null)
+                items.add(new OrderItem(
+                        p.getId(), p.getName(), p.getPrice(), e.getValue()
+                ));
+        }
+
+        String username = authService.getCurrentUser().getUsername();
+        OrderService.getInstance().createOrder(username, items);
+
         cartService.clearCart(userId);
         refresh();
-        JOptionPane.showMessageDialog(this, "Checkout completed");
-    }
 
-    private void updateButtons() {
-        boolean selected = table.getSelectedRow() != -1;
-        minusBtn.setEnabled(selected);
-        plusBtn.setEnabled(selected);
-        checkoutBtn.setEnabled(table.getRowCount() > 0);
-    }
-
-    private void formatNumbers() {
-        DefaultTableCellRenderer right = new DefaultTableCellRenderer();
-        right.setHorizontalAlignment(SwingConstants.RIGHT);
-
-        table.getColumnModel().getColumn(1).setCellRenderer(right);
-        table.getColumnModel().getColumn(2).setCellRenderer(right);
-        table.getColumnModel().getColumn(3).setCellRenderer(right);
+        JOptionPane.showMessageDialog(this, "Order placed successfully");
     }
 }
