@@ -11,14 +11,16 @@ import com.shoppingmall.service.OrderService;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CartPanel extends JPanel {
 
     private final CartService cartService;
     private final ProductRepository productRepository;
     private final AuthService authService;
+    private final OrderService orderService;
     private final String userId;
 
     private final JTable table;
@@ -28,11 +30,13 @@ public class CartPanel extends JPanel {
     public CartPanel(CartService cartService,
                      ProductRepository productRepository,
                      AuthService authService,
+                     OrderService orderService,
                      String userId) {
 
         this.cartService = cartService;
         this.productRepository = productRepository;
         this.authService = authService;
+        this.orderService = orderService;
         this.userId = userId;
 
         setLayout(new BorderLayout());
@@ -84,14 +88,18 @@ public class CartPanel extends JPanel {
         List<OrderItem> items = new ArrayList<>();
         for (Map.Entry<String, Integer> e : cart.getItems().entrySet()) {
             Product p = productRepository.findById(e.getKey()).orElse(null);
-            if (p != null)
+            if (p != null) {
                 items.add(new OrderItem(
-                        p.getId(), p.getName(), p.getPrice(), e.getValue()
+                        p.getId(),
+                        p.getName(),
+                        p.getPrice(),
+                        e.getValue()
                 ));
+            }
         }
 
         String username = authService.getCurrentUser().getUsername();
-        OrderService.getInstance().createOrder(username, items);
+        orderService.createOrder(username, items);
 
         cartService.clearCart(userId);
         refresh();

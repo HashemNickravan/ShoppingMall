@@ -4,6 +4,7 @@ import com.shoppingmall.model.User;
 import com.shoppingmall.repository.ProductRepository;
 import com.shoppingmall.service.AuthService;
 import com.shoppingmall.service.CartService;
+import com.shoppingmall.service.OrderService;
 import com.shoppingmall.service.ProductService;
 
 import javax.swing.*;
@@ -15,7 +16,8 @@ public class CustomerPanel extends JPanel {
                          ProductService productService,
                          CartService cartService,
                          ProductRepository productRepository,
-                         AuthService authService) {
+                         AuthService authService,
+                         OrderService orderService) {
 
         setLayout(new BorderLayout());
 
@@ -38,6 +40,7 @@ public class CustomerPanel extends JPanel {
                         cartService,
                         productRepository,
                         authService,
+                        orderService,
                         user.getId()
                 );
         add(cartPanel, BorderLayout.SOUTH);

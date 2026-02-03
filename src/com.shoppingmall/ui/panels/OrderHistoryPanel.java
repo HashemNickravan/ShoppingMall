@@ -10,7 +10,8 @@ import java.util.List;
 
 public class OrderHistoryPanel extends JPanel {
 
-    public OrderHistoryPanel(AuthService authService) {
+    public OrderHistoryPanel(AuthService authService, OrderService orderService) {
+
         setLayout(new BorderLayout());
 
         DefaultListModel<String> model = new DefaultListModel<>();
@@ -18,10 +19,9 @@ public class OrderHistoryPanel extends JPanel {
         add(new JScrollPane(list), BorderLayout.CENTER);
 
         List<Order> orders =
-                OrderService.getInstance()
-                        .getOrdersByUser(
-                                authService.getCurrentUser().getUsername()
-                        );
+                orderService.getOrdersByUser(
+                        authService.getCurrentUser().getUsername()
+                );
 
         for (Order o : orders) {
             model.addElement(

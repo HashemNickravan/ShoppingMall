@@ -10,6 +10,7 @@ import com.shoppingmall.repository.impl.InMemoryProductRepository;
 import com.shoppingmall.repository.impl.InMemoryUserRepository;
 import com.shoppingmall.service.AuthService;
 import com.shoppingmall.service.CartService;
+import com.shoppingmall.service.OrderService;
 import com.shoppingmall.service.ProductService;
 import com.shoppingmall.ui.panels.AdminPanel;
 import com.shoppingmall.ui.panels.CustomerPanel;
@@ -26,6 +27,7 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
     private final AuthService authService;
     private final ProductService productService;
     private final CartService cartService;
+    private final OrderService orderService;
     private final ProductRepository productRepository;
 
     public MainFrame() {
@@ -37,6 +39,7 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
         authService = new AuthService(userRepository);
         productService = new ProductService(productRepository);
         cartService = new CartService(cartRepository);
+        orderService = new OrderService();
 
         cardLayout = new CardLayout();
         setLayout(cardLayout);
@@ -64,7 +67,8 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
                             productService,
                             cartService,
                             productRepository,
-                            authService
+                            authService,
+                            orderService
                     );
             add(customerPanel, "CUSTOMER");
             cardLayout.show(getContentPane(), "CUSTOMER");
