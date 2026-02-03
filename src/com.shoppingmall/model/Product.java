@@ -51,6 +51,7 @@ public class Product {
         if (!(o instanceof Product)) return false;
         Product product = (Product) o;
         return Objects.equals(id, product.id);
+
     }
 
     @Override

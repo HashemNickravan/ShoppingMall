@@ -1,7 +1,6 @@
 package com.shoppingmall.service;
 
 import com.shoppingmall.model.Cart;
-import com.shoppingmall.model.CartItem;
 import com.shoppingmall.model.Product;
 import com.shoppingmall.repository.CartRepository;
 
@@ -14,7 +13,7 @@ public class CartService {
     }
 
     public Cart getCartByUserId(String userId) {
-        return cartRepository.findByCustomerId(userId)
+        return cartRepository.findByUserId(userId)
                 .orElseGet(() -> {
                     Cart cart = new Cart(userId);
                     cartRepository.save(cart);
@@ -22,19 +21,31 @@ public class CartService {
                 });
     }
 
-    public void addToCart(Cart cart, Product product, int quantity) {
-        cart.addItem(new CartItem(product, quantity));
+    public void addToCart(String userId, Product product, int quantity) {
+        Cart cart = getCartByUserId(userId);
+        cart.addItem(product, quantity);
         cartRepository.save(cart);
     }
 
-    public void removeFromCart(Cart cart, String productId) {
-        cart.removeItem(productId);
+    public void updateQuantity(String userId, Product product, int quantity) {
+        Cart cart = getCartByUserId(userId);
+        if (quantity <= 0) {
+            cart.removeItem(product);
+        } else {
+            cart.setQuantity(product, quantity);
+        }
         cartRepository.save(cart);
     }
 
-    public double calculateTotalPrice(Cart cart) {
-        return cart.getItems().stream()
-                .mapToDouble(CartItem::getTotalPrice)
-                .sum();
+    public void removeFromCart(String userId, Product product) {
+        Cart cart = getCartByUserId(userId);
+        cart.removeItem(product);
+        cartRepository.save(cart);
+    }
+
+    public void clearCart(String userId) {
+        Cart cart = getCartByUserId(userId);
+        cart.clear();
+        cartRepository.save(cart);
     }
 }

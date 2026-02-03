@@ -13,7 +13,7 @@ import java.util.Optional;
 public class JsonProductRepository implements ProductRepository {
 
     private static final String FILE_PATH = "data/products.json";
-    private final Type listType = new TypeToken<List<Product>>(){}.getType();
+    private final Type listType = new TypeToken<List<Product>>() {}.getType();
 
     @Override
     public void save(Product product) {
@@ -26,13 +26,15 @@ public class JsonProductRepository implements ProductRepository {
     public List<Product> findAll() {
         File file = new File(FILE_PATH);
         if (!file.exists()) {
+            file.getParentFile().mkdirs();
             return new ArrayList<>();
         }
 
         try (Reader reader = new FileReader(file)) {
-            return GsonProvider.get().fromJson(reader, listType);
+            List<Product> products = GsonProvider.get().fromJson(reader, listType);
+            return products != null ? products : new ArrayList<>();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return new ArrayList<>();
         }
     }
 
@@ -48,7 +50,6 @@ public class JsonProductRepository implements ProductRepository {
         try (Writer writer = new FileWriter(FILE_PATH)) {
             GsonProvider.get().toJson(products, writer);
         } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 }

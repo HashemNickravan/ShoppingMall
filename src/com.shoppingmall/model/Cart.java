@@ -1,38 +1,38 @@
 package com.shoppingmall.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Cart {
-    private String customerId;
-    private List<CartItem> items;
 
-    public Cart(String customerId) {
-        this.customerId = customerId;
-        this.items = new ArrayList<>();
+    private String userId;
+    private Map<Product, Integer> items = new HashMap<>();
+
+    public Cart(String userId) {
+        this.userId = userId;
     }
 
-    public String getCustomerId() {
-        return customerId;
+    public String getUserId() {
+        return userId;
     }
 
-    public List<CartItem> getItems() {
+    public Map<Product, Integer> getItems() {
         return items;
     }
 
-    public void addItem(CartItem newItem) {
-        for (CartItem item : items) {
-            if (item.getProduct().getId().equals(newItem.getProduct().getId())) {
-                item.setQuantity(item.getQuantity() + newItem.getQuantity());
-                return;
-            }
-        }
-        items.add(newItem);
+    public void addItem(Product product, int quantity) {
+        items.put(product, items.getOrDefault(product, 0) + quantity);
     }
 
-    public void removeItem(String productId) {
-        items.removeIf(item ->
-                item.getProduct().getId().equals(productId));
+    public void setQuantity(Product product, int quantity) {
+        items.put(product, quantity);
     }
 
+    public void removeItem(Product product) {
+        items.remove(product);
+    }
+
+    public void clear() {
+        items.clear();
+    }
 }

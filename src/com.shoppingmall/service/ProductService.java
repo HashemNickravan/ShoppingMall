@@ -4,7 +4,6 @@ import com.shoppingmall.model.Product;
 import com.shoppingmall.repository.ProductRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class ProductService {
 
@@ -22,10 +21,11 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public List<Product> searchByName(String keyword) {
-        return productRepository.findAll().stream()
-                .filter(p -> p.getName().toLowerCase()
-                        .contains(keyword.toLowerCase()))
-                .collect(Collectors.toList());
+    public Product getById(String id) {
+        return productRepository.findById(id)
+                .orElseThrow(() ->
+                        new IllegalArgumentException("Product not found: " + id));
     }
+
+
 }
