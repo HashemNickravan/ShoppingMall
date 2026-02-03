@@ -1,7 +1,7 @@
 package com.shoppingmall.ui.panels;
 
-import com.shoppingmall.service.AuthService;
 import com.shoppingmall.model.User;
+import com.shoppingmall.service.AuthService;
 import com.shoppingmall.ui.util.LoginSuccessListener;
 
 import javax.swing.*;
@@ -32,7 +32,6 @@ public class LoginPanel extends JPanel {
         add(title, gbc);
 
         gbc.gridwidth = 1;
-
         gbc.gridy++;
         add(new JLabel("Username:"), gbc);
 
@@ -59,19 +58,19 @@ public class LoginPanel extends JPanel {
     }
 
     private void login() {
-        String username = usernameField.getText().trim();
-        String password = new String(passwordField.getPassword());
-
-        User user = authService.login(username, password);
-
-        if (user == null) {
-            JOptionPane.showMessageDialog(this,
-                    "Invalid username or password",
-                    "Login Failed",
-                    JOptionPane.ERROR_MESSAGE);
-        } else {
+        try {
+            User user = authService.login(
+                    usernameField.getText().trim(),
+                    new String(passwordField.getPassword())
+            );
             listener.onLoginSuccess(user);
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    ex.getMessage(),
+                    "Login Failed",
+                    JOptionPane.ERROR_MESSAGE
+            );
         }
-
     }
 }

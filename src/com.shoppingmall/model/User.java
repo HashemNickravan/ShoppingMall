@@ -1,35 +1,28 @@
 package com.shoppingmall.model;
 
-public abstract class User {
-    protected String id;
-    protected String username;
-    protected String password;
-    protected String role;
+public class User {
 
-    protected User(String id, String username, String password, String role) {
+    private String id;
+    private String username;
+    private String password;
+    private Role role;
+    private long balance;
+
+    public User(String id, String username, String password, Role role, long balance) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
+        this.balance = balance;
     }
 
-    public String getId() {
-        return id;
+    public User(String id, String username, String password, String admin) {
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+    public String getId() { return id; }
+    public String getUsername() { return username; }
+    public String getPassword() { return password; }
+    public Role getRole() { return role; }
+    public long getBalance() { return balance; }
+    public void setBalance(long balance) { this.balance = balance; }
 }

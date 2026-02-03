@@ -2,6 +2,7 @@ package com.shoppingmall.ui;
 
 import com.shoppingmall.model.Admin;
 import com.shoppingmall.model.Product;
+import com.shoppingmall.model.Role;
 import com.shoppingmall.model.User;
 import com.shoppingmall.repository.CartRepository;
 import com.shoppingmall.repository.ProductRepository;
@@ -50,8 +51,9 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
         cartService = new CartService(cartRepository);
 
         if (userRepository.findAll().isEmpty()) {
-            Admin admin = new Admin("1", "admin", "admin123");
-            userRepository.save(admin);
+            userRepository.save(
+                    new User("1", "admin", "admin123", Role.ADMIN, 0)
+            );
         }
 
         if (productService.getAllProducts().isEmpty()) {
@@ -69,12 +71,7 @@ public class MainFrame extends JFrame implements LoginSuccessListener {
     @Override
     public void onLoginSuccess(User user) {
 
-        JOptionPane.showMessageDialog(
-                this,
-                "Login successful: " + user.getUsername()
-        );
-
-        if (user instanceof Admin) {
+        if (user.getRole() == Role.ADMIN) {
             AdminPanel adminPanel =
                     new AdminPanel((Admin) user, productService);
 
