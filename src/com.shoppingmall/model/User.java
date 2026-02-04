@@ -1,31 +1,50 @@
 package com.shoppingmall.model;
 
 public class User {
-
-    private String id;
     private String username;
     private String password;
     private Role role;
-    private long balance;
+    private double balance;
 
-    public User(String id, String username, String password, Role role, long balance) {
-        this.id = id;
+    public User() {
+    }
+
+    public User(String username, String password, Role role, double balance) {
         this.username = username;
         this.password = password;
         this.role = role;
         this.balance = balance;
     }
 
-    public User(String id, String username, String password, String admin) {
+    public String getUsername() {
+        return username;
     }
 
-    public User(String username, String password, Role role, int i) {
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getId() { return id; }
-    public String getUsername() { return username; }
-    public String getPassword() { return password; }
-    public Role getRole() { return role; }
-    public long getBalance() { return balance; }
-    public void setBalance(long balance) { this.balance = balance; }
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
 }

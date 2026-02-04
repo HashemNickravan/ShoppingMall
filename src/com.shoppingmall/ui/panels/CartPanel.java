@@ -1,109 +1,183 @@
 package com.shoppingmall.ui.panels;
 
 import com.shoppingmall.model.Cart;
-import com.shoppingmall.model.OrderItem;
 import com.shoppingmall.model.Product;
-import com.shoppingmall.repository.ProductRepository;
-import com.shoppingmall.service.AuthService;
-import com.shoppingmall.service.CartService;
-import com.shoppingmall.service.OrderService;
+import com.shoppingmall.model.User;
+import com.shoppingmall.ui.MainFrame;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class CartPanel extends JPanel {
 
-    private final CartService cartService;
-    private final ProductRepository productRepository;
-    private final AuthService authService;
-    private final OrderService orderService;
-    private final String userId;
+    private MainFrame mainFrame;
+    private CustomerPanel customerPanel;
+    private JTable cartTable;
+    private DefaultTableModel cartTableModel;
+    private JLabel totalLabel;
+    private JLabel balanceLabel;
 
-    private final JTable table;
-    private final DefaultTableModel tableModel;
-    private final JLabel totalLabel;
+    public CartPanel(MainFrame mainFrame, CustomerPanel customerPanel) {
+        this.mainFrame = mainFrame;
+        this.customerPanel = customerPanel;
+        initializeUI();
+        loadCart();
+    }
 
-    public CartPanel(CartService cartService,
-                     ProductRepository productRepository,
-                     AuthService authService,
-                     OrderService orderService,
-                     String userId) {
-
-        this.cartService = cartService;
-        this.productRepository = productRepository;
-        this.authService = authService;
-        this.orderService = orderService;
-        this.userId = userId;
-
+    private void initializeUI() {
         setLayout(new BorderLayout());
 
-        tableModel = new DefaultTableModel(
-                new Object[]{"Product", "Price", "Qty", "Total"}, 0
-        );
-        table = new JTable(tableModel);
-        add(new JScrollPane(table), BorderLayout.CENTER);
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        balanceLabel = new JLabel();
+        balanceLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        topPanel.add(balanceLabel);
+        add(topPanel, BorderLayout.NORTH);
 
-        JPanel bottom = new JPanel(new BorderLayout());
-        totalLabel = new JLabel("Total: 0 Toman");
+        String[] columns = {"Product", "Price", "Quantity", "Subtotal"};
+        cartTableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return column == 2;
+            }
 
-        JButton checkoutBtn = new JButton("Checkout");
-        checkoutBtn.addActionListener(e -> checkout());
+            @Override
+            public Class<?> getColumnClass(int columnIndex) {
+                return columnIndex == 2 ? Integer.class : String.class;
+            }
+        };
 
-        bottom.add(totalLabel, BorderLayout.WEST);
-        bottom.add(checkoutBtn, BorderLayout.EAST);
-        add(bottom, BorderLayout.SOUTH);
+        cartTable = new JTable(cartTableModel);
+        cartTable.getColumnModel().getColumn(2)
+                .setCellEditor(new DefaultCellEditor(new JTextField()));
 
-        refresh();
+        add(new JScrollPane(cartTable), BorderLayout.CENTER);
+
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+
+        totalLabel = new JLabel("Total: 0.00 Toman", SwingConstants.RIGHT);
+        totalLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        bottomPanel.add(totalLabel, BorderLayout.NORTH);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+
+        JButton updateButton = new JButton("Update Quantities");
+        updateButton.addActionListener(e -> handleUpdateQuantities());
+        buttonPanel.add(updateButton);
+
+        JButton removeButton = new JButton("Remove Selected");
+        removeButton.addActionListener(e -> handleRemoveItem());
+        buttonPanel.add(removeButton);
+
+        JButton clearButton = new JButton("Clear Cart");
+        clearButton.addActionListener(e -> handleClearCart());
+        buttonPanel.add(clearButton);
+
+        JButton checkoutButton = new JButton("Checkout");
+        checkoutButton.addActionListener(e -> handleCheckout());
+        buttonPanel.add(checkoutButton);
+
+        bottomPanel.add(buttonPanel, BorderLayout.SOUTH);
+        add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    private void refresh() {
-        tableModel.setRowCount(0);
-        Cart cart = cartService.getCartByUserId(userId);
+    public void loadCart() {
+        User user = mainFrame.getAuthService().getCurrentUser();
+        balanceLabel.setText(String.format("Your Balance: %.2f Toman", user.getBalance()));
+
+        cartTableModel.setRowCount(0);
+        Cart cart = mainFrame.getCartService().getOrCreateCart(user.getUsername());
+
         double total = 0;
+        for (Map.Entry<String, Integer> entry : cart.getItems().entrySet()) {
+            Product product = mainFrame.getProductService()
+                    .getProductById(entry.getKey()).orElse(null);
 
-        for (Map.Entry<String, Integer> e : cart.getItems().entrySet()) {
-            Product p = productRepository.findById(e.getKey()).orElse(null);
-            if (p != null) {
-                double subtotal = p.getPrice() * e.getValue();
-                total += subtotal;
-                tableModel.addRow(
-                        new Object[]{p.getName(), p.getPrice(), e.getValue(), subtotal}
-                );
+            if (product != null) {
+                int qty = entry.getValue();
+                double sub = product.getPrice() * qty;
+                total += sub;
+
+                cartTableModel.addRow(new Object[]{
+                        product.getName(),
+                        String.format("%.2f", product.getPrice()),
+                        qty,
+                        String.format("%.2f", sub)
+                });
             }
         }
-        totalLabel.setText("Total: " + total + " Toman");
+        totalLabel.setText(String.format("Total: %.2f Toman", total));
     }
 
-    private void checkout() {
-        Cart cart = cartService.getCartByUserId(userId);
-        if (cart.getItems().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Cart is empty");
-            return;
-        }
+    private void handleUpdateQuantities() {
+        User user = mainFrame.getAuthService().getCurrentUser();
+        Cart cart = mainFrame.getCartService().getOrCreateCart(user.getUsername());
 
-        List<OrderItem> items = new ArrayList<>();
-        for (Map.Entry<String, Integer> e : cart.getItems().entrySet()) {
-            Product p = productRepository.findById(e.getKey()).orElse(null);
-            if (p != null) {
-                items.add(new OrderItem(
-                        p.getId(),
-                        p.getName(),
-                        p.getPrice(),
-                        e.getValue()
-                ));
+        int index = 0;
+        for (String productId : cart.getItems().keySet()) {
+            Object value = cartTableModel.getValueAt(index, 2);
+            int quantity = Integer.parseInt(value.toString());
+
+            Product product = mainFrame.getProductService()
+                    .getProductById(productId).orElse(null);
+
+            if (product != null && quantity <= product.getStock()) {
+                mainFrame.getCartService()
+                        .updateCartItemQuantity(user.getUsername(), productId, quantity);
+            }
+            index++;
+        }
+        loadCart();
+    }
+
+    private void handleRemoveItem() {
+        int row = cartTable.getSelectedRow();
+        if (row < 0) return;
+
+        String name = (String) cartTableModel.getValueAt(row, 0);
+        User user = mainFrame.getAuthService().getCurrentUser();
+        Cart cart = mainFrame.getCartService().getOrCreateCart(user.getUsername());
+
+        for (String productId : cart.getItems().keySet()) {
+            Product product = mainFrame.getProductService()
+                    .getProductById(productId).orElse(null);
+            if (product != null && product.getName().equals(name)) {
+                mainFrame.getCartService().removeFromCart(user.getUsername(), productId);
+                break;
+            }
+        }
+        loadCart();
+    }
+
+    private void handleClearCart() {
+        User user = mainFrame.getAuthService().getCurrentUser();
+        mainFrame.getCartService().clearCart(user.getUsername());
+        loadCart();
+    }
+
+    private void handleCheckout() {
+        User user = mainFrame.getAuthService().getCurrentUser();
+        Cart cart = mainFrame.getCartService().getOrCreateCart(user.getUsername());
+
+        double total = mainFrame.getCartService().calculateTotal(user.getUsername());
+        if (user.getBalance() < total) return;
+
+        mainFrame.getAuthService().updateUserBalance(user.getBalance() - total);
+
+        for (String productId : cart.getItems().keySet()) {
+            Product product = mainFrame.getProductService()
+                    .getProductById(productId).orElse(null);
+            if (product != null) {
+                int qty = cart.getItems().get(productId);
+                product.setStock(product.getStock() - qty);
+                mainFrame.getProductService().updateProduct(product);
             }
         }
 
-        String username = authService.getCurrentUser().getUsername();
-        orderService.createOrder(username, items);
-
-        cartService.clearCart(userId);
-        refresh();
-
-        JOptionPane.showMessageDialog(this, "Order placed successfully");
+        mainFrame.getOrderService().createOrder(user.getUsername(), cart);
+        mainFrame.getCartService().clearCart(user.getUsername());
+        loadCart();
+        customerPanel.refreshOrders();
     }
 }

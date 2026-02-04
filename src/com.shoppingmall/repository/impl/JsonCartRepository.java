@@ -1,66 +1,67 @@
 package com.shoppingmall.repository.impl;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.shoppingmall.model.Cart;
 import com.shoppingmall.repository.CartRepository;
 
+import java.io.*;
 import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class JsonCartRepository implements CartRepository {
-
-    private static final Path FILE_PATH = Path.of("data", "carts.json");
-    private final Gson gson = new Gson();
-    private Map<String, Cart> carts = new HashMap<>();
+    private static final String FILE_PATH = "data/carts.json";
+    private final Gson gson;
+    private Map<String, Cart> carts;
 
     public JsonCartRepository() {
-        load();
+        this.gson = new GsonBuilder().setPrettyPrinting().create();
+        this.carts = new HashMap<>();
+        loadFromFile();
     }
 
-    private void load() {
-        try {
-            Files.createDirectories(FILE_PATH.getParent());
-            if (!Files.exists(FILE_PATH)) {
-                saveToFile();
-                return;
+    private void loadFromFile() {
+        File file = new File(FILE_PATH);
+        if (!file.exists()) {
+            file.getParentFile().mkdirs();
+            saveToFile();
+            return;
+        }
+
+        try (Reader reader = new FileReader(file)) {
+            Type type = new TypeToken<Map<String, Cart>>(){}.getType();
+            Map<String, Cart> loaded = gson.fromJson(reader, type);
+            if (loaded != null) {
+                carts = loaded;
             }
-            String json = Files.readString(FILE_PATH);
-            Type type = new TypeToken<Map<String, Cart>>() {}.getType();
-            Map<String, Cart> data = gson.fromJson(json, type);
-            if (data != null) {
-                carts = data;
-            }
-        } catch (Exception e) {
-            carts = new HashMap<>();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     private void saveToFile() {
-        try {
-            Files.writeString(FILE_PATH, gson.toJson(carts));
-        } catch (Exception ignored) {
+        try (Writer writer = new FileWriter(FILE_PATH)) {
+            gson.toJson(carts, writer);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
     @Override
-    public Optional<Cart> findByUserId(String userId) {
-        return Optional.ofNullable(carts.get(userId));
-    }
-
-    @Override
     public void save(Cart cart) {
-        carts.put(cart.getUserId(), cart);
+        carts.put(cart.getUsername(), cart);
         saveToFile();
     }
 
     @Override
-    public void deleteByUserId(String userId) {
-        carts.remove(userId);
+    public Optional<Cart> findByUsername(String username) {
+        return Optional.ofNullable(carts.get(username));
+    }
+
+    @Override
+    public void deleteByUsername(String username) {
+        carts.remove(username);
         saveToFile();
     }
 }

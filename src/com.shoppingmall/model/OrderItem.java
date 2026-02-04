@@ -1,36 +1,54 @@
 package com.shoppingmall.model;
 
 public class OrderItem {
-
     private String productId;
     private String productName;
-    private double price;
     private int quantity;
+    private double priceAtPurchase;
 
-    public OrderItem(String productId, String productName, double price, int quantity) {
-        this.productId = productId;
-        this.productName = productName;
-        this.price = price;
-        this.quantity = quantity;
+    public OrderItem() {
     }
 
-    public double getTotalPrice() {
-        return price * quantity;
+    public OrderItem(String productId, String productName, int quantity, double priceAtPurchase) {
+        this.productId = productId;
+        this.productName = productName;
+        this.quantity = quantity;
+        this.priceAtPurchase = priceAtPurchase;
     }
 
     public String getProductId() {
         return productId;
     }
 
+    public void setProductId(String productId) {
+        this.productId = productId;
+    }
+
     public String getProductName() {
         return productName;
     }
 
-    public double getPrice() {
-        return price;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
     public int getQuantity() {
         return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getPriceAtPurchase() {
+        return priceAtPurchase;
+    }
+
+    public void setPriceAtPurchase(double priceAtPurchase) {
+        this.priceAtPurchase = priceAtPurchase;
+    }
+
+    public double getSubtotal() {
+        return quantity * priceAtPurchase;
     }
 }

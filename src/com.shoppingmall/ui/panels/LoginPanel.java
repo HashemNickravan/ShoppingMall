@@ -1,50 +1,109 @@
 package com.shoppingmall.ui.panels;
 
-import com.shoppingmall.model.User;
+import com.shoppingmall.model.Role;
 import com.shoppingmall.service.AuthService;
-import com.shoppingmall.ui.util.LoginSuccessListener;
+import com.shoppingmall.ui.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class LoginPanel extends JPanel {
-
-    private final AuthService authService;
-    private final LoginSuccessListener listener;
-
+    private MainFrame mainFrame;
     private JTextField usernameField;
     private JPasswordField passwordField;
 
-    public LoginPanel(AuthService authService, LoginSuccessListener listener) {
-        this.authService = authService;
-        this.listener = listener;
-
-        setLayout(new GridLayout(3, 2));
-
-        usernameField = new JTextField();
-        passwordField = new JPasswordField();
-
-        JButton loginButton = new JButton("Login");
-
-        add(new JLabel("Username"));
-        add(usernameField);
-        add(new JLabel("Password"));
-        add(passwordField);
-        add(new JLabel());
-        add(loginButton);
-
-        loginButton.addActionListener(e -> login());
+    public LoginPanel(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+        initializeUI();
     }
 
-    private void login() {
-        try {
-            User user = authService.login(
-                    usernameField.getText().trim(),
-                    new String(passwordField.getPassword())
-            );
-            listener.onLoginSuccess(user);
-        } catch (RuntimeException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage());
+    private void initializeUI() {
+        setLayout(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(10, 10, 10, 10);
+
+        // Title
+        JLabel titleLabel = new JLabel("Shopping Mall - Login");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(titleLabel, gbc);
+
+        // Username
+        gbc.gridwidth = 1;
+        gbc.gridy = 1;
+        gbc.anchor = GridBagConstraints.EAST;
+        add(new JLabel("Username:"), gbc);
+
+        usernameField = new JTextField(20);
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        add(usernameField, gbc);
+
+        // Password
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.EAST;
+        add(new JLabel("Password:"), gbc);
+
+        passwordField = new JPasswordField(20);
+        gbc.gridx = 1;
+        gbc.anchor = GridBagConstraints.WEST;
+        add(passwordField, gbc);
+
+        // Buttons panel
+        JPanel buttonPanel = new JPanel(new FlowLayout());
+
+        JButton loginButton = new JButton("Login");
+        loginButton.addActionListener(e -> handleLogin());
+        buttonPanel.add(loginButton);
+
+        JButton registerButton = new JButton("Register");
+        registerButton.addActionListener(e -> mainFrame.showRegisterPanel());
+        buttonPanel.add(registerButton);
+
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
+        add(buttonPanel, gbc);
+
+        // Enter key support
+        passwordField.addActionListener(e -> handleLogin());
+    }
+
+    private void handleLogin() {
+        String username = usernameField.getText().trim();
+        String password = new String(passwordField.getPassword());
+
+        if (username.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "Please enter both username and password.",
+                    "Login Error",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
         }
+
+        AuthService authService = mainFrame.getAuthService();
+        if (authService.login(username, password)) {
+            if (authService.getCurrentUser().getRole() == Role.ADMIN) {
+                mainFrame.showAdminPanel();
+            } else {
+                mainFrame.showCustomerPanel();
+            }
+            clearFields();
+        } else {
+            JOptionPane.showMessageDialog(this,
+                    "Invalid username or password.",
+                    "Login Error",
+                    JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void clearFields() {
+        usernameField.setText("");
+        passwordField.setText("");
     }
 }

@@ -1,1 +1,20 @@
-{"1":{"id":"1","username":"admin","password":"admin123","role":"ADMIN","balance":0}}
+{
+  "1": {
+    "username": "admin",
+    "password": "admin123",
+    "role": "ADMIN",
+    "balance": 0.0
+  },
+  "Hashem": {
+    "username": "Hashem",
+    "password": "Hashem",
+    "role": "ADMIN",
+    "balance": 1.0E10
+  },
+  "Ali": {
+    "username": "Ali",
+    "password": "1234",
+    "role": "CUSTOMER",
+    "balance": 1000000.0
+  }
+}

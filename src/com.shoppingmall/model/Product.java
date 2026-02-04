@@ -1,17 +1,20 @@
 package com.shoppingmall.model;
 
-import java.util.Objects;
-
 public class Product {
     private String id;
     private String name;
+    private Category category;
     private double price;
     private int stock;
     private String imagePath;
 
-    public Product(String id, String name, double price, int stock, String imagePath) {
+    public Product() {
+    }
+
+    public Product(String id, String name, Category category, double price, int stock, String imagePath) {
         this.id = id;
         this.name = name;
+        this.category = category;
         this.price = price;
         this.stock = stock;
         this.imagePath = imagePath;
@@ -21,41 +24,47 @@ public class Product {
         return id;
     }
 
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 
     public double getPrice() {
         return price;
     }
 
-    public int getStock() {
-        return stock;
-    }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
     public void setPrice(double price) {
         this.price = price;
+    }
+
+    public int getStock() {
+        return stock;
     }
 
     public void setStock(int stock) {
         this.stock = stock;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Product)) return false;
-        Product product = (Product) o;
-        return Objects.equals(id, product.id);
-
+    public String getImagePath() {
+        return imagePath;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
     }
 }

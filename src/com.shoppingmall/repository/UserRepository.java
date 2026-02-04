@@ -8,4 +8,5 @@ public interface UserRepository {
     void save(User user);
     Optional<User> findByUsername(String username);
     List<User> findAll();
+    boolean existsByUsername(String username);
 }

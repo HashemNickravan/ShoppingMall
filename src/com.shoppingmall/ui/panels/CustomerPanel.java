@@ -1,63 +1,58 @@
 package com.shoppingmall.ui.panels;
 
-import com.shoppingmall.model.User;
-import com.shoppingmall.repository.ProductRepository;
-import com.shoppingmall.service.AuthService;
-import com.shoppingmall.service.CartService;
-import com.shoppingmall.service.OrderService;
-import com.shoppingmall.service.ProductService;
+import com.shoppingmall.ui.MainFrame;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class CustomerPanel extends JPanel {
+    private MainFrame mainFrame;
+    private ProductListPanel productListPanel;
+    private CartPanel cartPanel;
+    private OrderHistoryPanel orderHistoryPanel;
 
-    public CustomerPanel(User user,
-                         ProductService productService,
-                         CartService cartService,
-                         ProductRepository productRepository,
-                         AuthService authService,
-                         OrderService orderService) {
+    public CustomerPanel(MainFrame mainFrame) {
+        this.mainFrame = mainFrame;
+        initializeUI();
+    }
 
+    private void initializeUI() {
         setLayout(new BorderLayout());
 
-        JLabel header =
-                new JLabel(
-                        "Customer Dashboard - " + user.getUsername(),
-                        SwingConstants.CENTER
-                );
-        add(header, BorderLayout.NORTH);
+        JPanel topPanel = new JPanel(new BorderLayout());
+        JLabel welcomeLabel = new JLabel("Customer Panel - Welcome " +
+                mainFrame.getAuthService().getCurrentUser().getUsername());
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        topPanel.add(welcomeLabel, BorderLayout.WEST);
 
-        JTabbedPane tabs = new JTabbedPane();
+        JButton logoutButton = new JButton("Logout");
+        logoutButton.addActionListener(e -> handleLogout());
+        topPanel.add(logoutButton, BorderLayout.EAST);
 
-        tabs.add(
-                "Products",
-                new ProductListPanel(
-                        productService,
-                        cartService,
-                        user
-                )
-        );
+        add(topPanel, BorderLayout.NORTH);
 
-        tabs.add(
-                "Cart",
-                new CartPanel(
-                        cartService,
-                        productRepository,
-                        authService,
-                        orderService,
-                        user.getId()
-                )
-        );
+        JTabbedPane tabbedPane = new JTabbedPane();
 
-        tabs.add(
-                "Orders",
-                new OrderHistoryPanel(
-                        authService,
-                        orderService
-                )
-        );
+        productListPanel = new ProductListPanel(mainFrame, this);
+        cartPanel = new CartPanel(mainFrame, this);
+        orderHistoryPanel = new OrderHistoryPanel(mainFrame);
 
-        add(tabs, BorderLayout.CENTER);
+        tabbedPane.addTab("Products", productListPanel);
+        tabbedPane.addTab("Cart", cartPanel);
+        tabbedPane.addTab("Orders", orderHistoryPanel);
+
+        add(tabbedPane, BorderLayout.CENTER);
+    }
+
+    private void handleLogout() {
+        mainFrame.logout();
+    }
+
+    public void refreshCart() {
+        cartPanel.loadCart();
+    }
+
+    public void refreshOrders() {
+        orderHistoryPanel.loadOrders();
     }
 }

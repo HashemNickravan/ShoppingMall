@@ -1,82 +1,138 @@
 package com.shoppingmall.ui;
 
-import com.shoppingmall.model.Role;
-import com.shoppingmall.model.User;
-import com.shoppingmall.repository.CartRepository;
-import com.shoppingmall.repository.ProductRepository;
-import com.shoppingmall.repository.UserRepository;
-import com.shoppingmall.repository.OrderRepository;
-import com.shoppingmall.repository.impl.InMemoryCartRepository;
-import com.shoppingmall.repository.impl.InMemoryProductRepository;
-import com.shoppingmall.repository.impl.InMemoryUserRepository;
-import com.shoppingmall.repository.impl.InMemoryOrderRepository;
-import com.shoppingmall.service.AuthService;
-import com.shoppingmall.service.CartService;
-import com.shoppingmall.service.OrderService;
-import com.shoppingmall.service.ProductService;
-import com.shoppingmall.ui.panels.AdminPanel;
-import com.shoppingmall.ui.panels.CustomerPanel;
-import com.shoppingmall.ui.panels.LoginPanel;
-import com.shoppingmall.ui.util.LoginSuccessListener;
+import com.shoppingmall.repository.*;
+import com.shoppingmall.repository.impl.*;
+import com.shoppingmall.service.*;
+import com.shoppingmall.ui.panels.*;
 
 import javax.swing.*;
 import java.awt.*;
 
-public class MainFrame extends JFrame implements LoginSuccessListener {
+public class MainFrame extends JFrame {
+    private JPanel contentPanel;
+    private CardLayout cardLayout;
 
-    private final CardLayout cardLayout;
+    // Repositories
+    private UserRepository userRepository;
+    private ProductRepository productRepository;
+    private CartRepository cartRepository;
+    private OrderRepository orderRepository;
 
-    private final AuthService authService;
-    private final ProductService productService;
-    private final CartService cartService;
-    private final OrderService orderService;
-    private final ProductRepository productRepository;
+    // Services
+    private AuthService authService;
+    private ProductService productService;
+    private CartService cartService;
+    private OrderService orderService;
+    private OrderExportService orderExportService;
 
     public MainFrame() {
-
-        UserRepository userRepository = new InMemoryUserRepository();
-        productRepository = new InMemoryProductRepository();
-        CartRepository cartRepository = new InMemoryCartRepository();
-        OrderRepository orderRepository = new InMemoryOrderRepository();
-
-        authService = new AuthService(userRepository);
-        productService = new ProductService(productRepository);
-        cartService = new CartService(cartRepository);
-        orderService = new OrderService(orderRepository);
-
-        cardLayout = new CardLayout();
-        setLayout(cardLayout);
-
-        add(new LoginPanel(authService, this), "LOGIN");
-        cardLayout.show(getContentPane(), "LOGIN");
-
-        setTitle("Shopping Mall");
-        setSize(900, 600);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setVisible(true);
+        initializeRepositories();
+        initializeServices();
+        initializeUI();
     }
 
-    @Override
-    public void onLoginSuccess(User user) {
-        if (user.getRole() == Role.ADMIN) {
-            add(
-                    new AdminPanel(user, productService),
-                    "ADMIN"
-            );
-            cardLayout.show(getContentPane(), "ADMIN");
-        } else {
-            add(
-                    new CustomerPanel(
-                            user,
-                            productService,
-                            cartService,
-                            productRepository,
-                            authService,
-                            orderService
-                    ),
-                    "CUSTOMER"
-            );
-            cardLayout.show(getContentPane(), "CUSTOMER");
+    private void initializeRepositories() {
+        userRepository = new JsonUserRepository();
+        productRepository = new JsonProductRepository();
+        cartRepository = new JsonCartRepository();
+        orderRepository = new JsonOrderRepository();
+    }
+
+    private void initializeServices() {
+        authService = new AuthService(userRepository);
+        productService = new ProductService(productRepository);
+        cartService = new CartService(cartRepository, productService);
+        orderService = new OrderService(orderRepository, productService);
+        orderExportService = new OrderExportService();
+    }
+
+    private void initializeUI() {
+        setTitle("Shopping Mall System");
+        setSize(1200, 800);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        cardLayout = new CardLayout();
+        contentPanel = new JPanel(cardLayout);
+
+        // Add panels
+        contentPanel.add(new LoginPanel(this), "LOGIN");
+        contentPanel.add(new RegisterPanel(this), "REGISTER");
+
+        add(contentPanel);
+        showLoginPanel();
+    }
+
+    public void showLoginPanel() {
+        cardLayout.show(contentPanel, "LOGIN");
+    }
+
+    public void showRegisterPanel() {
+        cardLayout.show(contentPanel, "REGISTER");
+    }
+
+    public void showCustomerPanel() {
+        // Remove existing customer panel if any
+        for (Component comp : contentPanel.getComponents()) {
+            if (comp instanceof CustomerPanel) {
+                contentPanel.remove(comp);
+            }
         }
+
+        CustomerPanel customerPanel = new CustomerPanel(this);
+        contentPanel.add(customerPanel, "CUSTOMER");
+        cardLayout.show(contentPanel, "CUSTOMER");
+    }
+
+    public void showAdminPanel() {
+        // Remove existing admin panel if any
+        for (Component comp : contentPanel.getComponents()) {
+            if (comp instanceof AdminPanel) {
+                contentPanel.remove(comp);
+            }
+        }
+
+        AdminPanel adminPanel = new AdminPanel(this);
+        contentPanel.add(adminPanel, "ADMIN");
+        cardLayout.show(contentPanel, "ADMIN");
+    }
+
+    public void logout() {
+        authService.logout();
+
+        // Remove customer and admin panels
+        Component[] components = contentPanel.getComponents();
+        for (Component comp : components) {
+            if (comp instanceof CustomerPanel || comp instanceof AdminPanel) {
+                contentPanel.remove(comp);
+            }
+        }
+
+        showLoginPanel();
+    }
+
+    // Getters for services
+    public AuthService getAuthService() {
+        return authService;
+    }
+
+    public ProductService getProductService() {
+        return productService;
+    }
+
+    public CartService getCartService() {
+        return cartService;
+    }
+
+    public OrderService getOrderService() {
+        return orderService;
+    }
+
+    public OrderExportService getOrderExportService() {
+        return orderExportService;
+    }
+
+    public ProductRepository getProductRepository() {
+        return productRepository;
     }
 }
