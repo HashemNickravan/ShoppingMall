@@ -25,7 +25,7 @@ public class RegisterPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // Title
+
         JLabel titleLabel = new JLabel("Shopping Mall - Register");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         gbc.gridx = 0;
@@ -34,7 +34,7 @@ public class RegisterPanel extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         add(titleLabel, gbc);
 
-        // Username
+
         gbc.gridwidth = 1;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.EAST;
@@ -45,7 +45,7 @@ public class RegisterPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         add(usernameField, gbc);
 
-        // Password
+
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.EAST;
@@ -56,7 +56,7 @@ public class RegisterPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         add(passwordField, gbc);
 
-        // Confirm Password
+
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.EAST;
@@ -67,7 +67,7 @@ public class RegisterPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         add(confirmPasswordField, gbc);
 
-        // Role
+
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.EAST;
@@ -78,7 +78,7 @@ public class RegisterPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         add(roleComboBox, gbc);
 
-        // Initial Balance
+
         gbc.gridx = 0;
         gbc.gridy = 5;
         gbc.anchor = GridBagConstraints.EAST;
@@ -89,7 +89,7 @@ public class RegisterPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         add(balanceField, gbc);
 
-        // Buttons panel
+
         JPanel buttonPanel = new JPanel(new FlowLayout());
 
         JButton registerButton = new JButton("Register");
@@ -114,7 +114,7 @@ public class RegisterPanel extends JPanel {
         Role role = (Role) roleComboBox.getSelectedItem();
         String balanceText = balanceField.getText().trim();
 
-        // Validation
+
         if (username.isEmpty() || password.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Username and password cannot be empty.",

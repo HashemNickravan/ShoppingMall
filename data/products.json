@@ -1,1 +1,154 @@
-{"1":{"id":"1","name":"Laptop","price":45000.0,"stock":10},"2":{"id":"2","name":"Mouse","price":500.0,"stock":50},"3":{"id":"3","name":"Keyboard","price":1200.0,"stock":30}}
+{
+  "P001": {
+    "id": "P001",
+    "name": "Coca cola drink",
+    "category": "FOOD",
+    "price": 30000.0,
+    "stock": 666,
+    "imagePath": "product_images/1770365969972_coca_cola.jpg"
+  },
+  "P002": {
+    "id": "P002",
+    "name": "Samsung TV 55 inch",
+    "category": "ELECTRONICS",
+    "price": 7.0E7,
+    "stock": 2,
+    "imagePath": "product_images/1770366051323_TV.jpg"
+  },
+  "P003": {
+    "id": "P003",
+    "name": "Persian Carpet",
+    "category": "HOME",
+    "price": 5.0E7,
+    "stock": 2,
+    "imagePath": "product_images/1770366132420_carpet.jpg"
+  },
+  "P004": {
+    "id": "P004",
+    "name": "Airpods pro 2 (Apple)",
+    "category": "ELECTRONICS",
+    "price": 2.5E7,
+    "stock": 4,
+    "imagePath": "product_images/1770366235964_airpods.jpg"
+  },
+  "P005": {
+    "id": "P005",
+    "name": "Bahman Cigarettes",
+    "category": "OTHER",
+    "price": 70000.0,
+    "stock": 20,
+    "imagePath": "product_images/1770366350182_bahman.jpg"
+  },
+  "P006": {
+    "id": "P006",
+    "name": "Blue Pen",
+    "category": "OTHER",
+    "price": 100000.0,
+    "stock": 20,
+    "imagePath": "product_images/1770366442771_pen.jpg"
+  },
+  "P007": {
+    "id": "P007",
+    "name": "Alicafe Coffee",
+    "category": "FOOD",
+    "price": 40000.0,
+    "stock": 500,
+    "imagePath": "product_images/1770366486207_alicafe.jpg"
+  },
+  "P008": {
+    "id": "P008",
+    "name": "Bange laptop bag",
+    "category": "OTHER",
+    "price": 4500000.0,
+    "stock": 8,
+    "imagePath": "product_images/1770366558307_bange_bag.jpg"
+  },
+  "P009": {
+    "id": "P009",
+    "name": "Basketball ball",
+    "category": "SPORTS",
+    "price": 1800000.0,
+    "stock": 9,
+    "imagePath": "product_images/1770366574162_basketball_ball.jpg"
+  },
+  "P010": {
+    "id": "P010",
+    "name": "BVLGARI AQVA perfume",
+    "category": "OTHER",
+    "price": 2.0E7,
+    "stock": 2,
+    "imagePath": "product_images/1770366661598_bvlgari_perfume.jpg"
+  },
+  "P011": {
+    "id": "P011",
+    "name": "Chelo kebab",
+    "category": "FOOD",
+    "price": 450000.0,
+    "stock": 12,
+    "imagePath": "product_images/1770366757031_chelokebab.jpg"
+  },
+  "P012": {
+    "id": "P012",
+    "name": "Creatine Powder",
+    "category": "SPORTS",
+    "price": 1800000.0,
+    "stock": 4,
+    "imagePath": "product_images/1770366850687_creatine_powder.jpg"
+  },
+  "P013": {
+    "id": "P013",
+    "name": "Dizi",
+    "category": "FOOD",
+    "price": 800000.0,
+    "stock": 3,
+    "imagePath": "product_images/1770366911669_dizi.jpg"
+  },
+  "P014": {
+    "id": "P014",
+    "name": "Doll",
+    "category": "TOYS",
+    "price": 350000.0,
+    "stock": 3,
+    "imagePath": "product_images/1770366963851_doll.jpg"
+  },
+  "P015": {
+    "id": "P015",
+    "name": "Dumbbell",
+    "category": "SPORTS",
+    "price": 6000000.0,
+    "stock": 6,
+    "imagePath": "product_images/1770367017062_dumbbell.jpg"
+  },
+  "P016": {
+    "id": "P016",
+    "name": "Iphone 17 promax 512 GB - Orange",
+    "category": "ELECTRONICS",
+    "price": 3.4E8,
+    "stock": 10,
+    "imagePath": "product_images/1770367152174_iphone.jpg"
+  },
+  "P017": {
+    "id": "P017",
+    "name": "Columbia Jacket - men",
+    "category": "CLOTHING",
+    "price": 3.2E7,
+    "stock": 6,
+    "imagePath": "product_images/1770367301021_jacket.jpg"
+  },
+  "P018": {
+    "id": "P018",
+    "name": "Turk Jeans - men",
+    "category": "CLOTHING",
+    "price": 3200000.0,
+    "stock": 7,
+    "imagePath": "product_images/1770367403696_jeans.jpg"
+  },
+  "P019": {
+    "id": "P019",
+    "name": "Gaming keyboard",
+    "category": "ELECTRONICS",
+    "price": 3200000.0,
+    "stock": 8,
+    "imagePath": "product_images/1770379767000_keyboard.jpg"
+  }
+}

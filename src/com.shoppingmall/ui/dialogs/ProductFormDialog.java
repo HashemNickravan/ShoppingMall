@@ -39,7 +39,7 @@ public class ProductFormDialog extends JDialog {
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.fill = GridBagConstraints.HORIZONTAL;
 
-        // Name
+
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.anchor = GridBagConstraints.EAST;
@@ -50,7 +50,7 @@ public class ProductFormDialog extends JDialog {
         gbc.anchor = GridBagConstraints.WEST;
         add(nameField, gbc);
 
-        // Category
+
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.EAST;
@@ -61,7 +61,7 @@ public class ProductFormDialog extends JDialog {
         gbc.anchor = GridBagConstraints.WEST;
         add(categoryComboBox, gbc);
 
-        // Price
+
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.EAST;
@@ -72,7 +72,7 @@ public class ProductFormDialog extends JDialog {
         gbc.anchor = GridBagConstraints.WEST;
         add(priceField, gbc);
 
-        // Stock
+
         gbc.gridx = 0;
         gbc.gridy = 3;
         gbc.anchor = GridBagConstraints.EAST;
@@ -83,7 +83,7 @@ public class ProductFormDialog extends JDialog {
         gbc.anchor = GridBagConstraints.WEST;
         add(stockField, gbc);
 
-        // Image
+
         gbc.gridx = 0;
         gbc.gridy = 4;
         gbc.anchor = GridBagConstraints.EAST;
@@ -100,7 +100,7 @@ public class ProductFormDialog extends JDialog {
         gbc.anchor = GridBagConstraints.WEST;
         add(imagePanel, gbc);
 
-        // Buttons
+
         JPanel buttonPanel = new JPanel(new FlowLayout());
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(e -> handleSave());
@@ -128,7 +128,7 @@ public class ProductFormDialog extends JDialog {
         if (fileChooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
 
-            // Copy image to product_images directory
+
             try {
                 File imagesDir = new File("product_images");
                 if (!imagesDir.exists()) {
@@ -171,7 +171,7 @@ public class ProductFormDialog extends JDialog {
         String priceText = priceField.getText().trim();
         String stockText = stockField.getText().trim();
 
-        // Validation
+
         if (name.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Product name cannot be empty.",
@@ -208,7 +208,7 @@ public class ProductFormDialog extends JDialog {
             return;
         }
 
-        // Update product
+
         if (product == null) {
             product = new Product();
         }

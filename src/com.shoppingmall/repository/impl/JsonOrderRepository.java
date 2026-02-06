@@ -79,7 +79,6 @@ public class JsonOrderRepository implements OrderRepository {
         return new ArrayList<>(orders.values());
     }
 
-    // ✅ CHANGED TO PUBLIC - این کلاس رو public کردم
     public static class LocalDateTimeAdapter implements JsonSerializer<LocalDateTime>, JsonDeserializer<LocalDateTime> {
         private static final DateTimeFormatter formatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 

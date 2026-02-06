@@ -64,7 +64,6 @@ public class ProductService {
                 sorted.sort(Comparator.comparing(p -> p.getCategory().toString()));
                 break;
             default:
-                // Keep original order
                 break;
         }
 

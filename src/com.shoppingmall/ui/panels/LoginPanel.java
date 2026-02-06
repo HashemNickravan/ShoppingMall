@@ -22,7 +22,7 @@ public class LoginPanel extends JPanel {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(10, 10, 10, 10);
 
-        // Title
+
         JLabel titleLabel = new JLabel("Shopping Mall - Login");
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         gbc.gridx = 0;
@@ -31,7 +31,7 @@ public class LoginPanel extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         add(titleLabel, gbc);
 
-        // Username
+
         gbc.gridwidth = 1;
         gbc.gridy = 1;
         gbc.anchor = GridBagConstraints.EAST;
@@ -42,7 +42,7 @@ public class LoginPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         add(usernameField, gbc);
 
-        // Password
+
         gbc.gridx = 0;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.EAST;
@@ -53,7 +53,7 @@ public class LoginPanel extends JPanel {
         gbc.anchor = GridBagConstraints.WEST;
         add(passwordField, gbc);
 
-        // Buttons panel
+
         JPanel buttonPanel = new JPanel(new FlowLayout());
 
         JButton loginButton = new JButton("Login");
@@ -70,7 +70,7 @@ public class LoginPanel extends JPanel {
         gbc.anchor = GridBagConstraints.CENTER;
         add(buttonPanel, gbc);
 
-        // Enter key support
+
         passwordField.addActionListener(e -> handleLogin());
     }
 

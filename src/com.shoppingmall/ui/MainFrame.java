@@ -12,18 +12,15 @@ public class MainFrame extends JFrame {
     private JPanel contentPanel;
     private CardLayout cardLayout;
 
-    // Repositories
     private UserRepository userRepository;
     private ProductRepository productRepository;
     private CartRepository cartRepository;
     private OrderRepository orderRepository;
 
-    // Services
     private AuthService authService;
     private ProductService productService;
     private CartService cartService;
     private OrderService orderService;
-    private OrderExportService orderExportService;
 
     public MainFrame() {
         initializeRepositories();
@@ -43,7 +40,6 @@ public class MainFrame extends JFrame {
         productService = new ProductService(productRepository);
         cartService = new CartService(cartRepository, productService);
         orderService = new OrderService(orderRepository, productService);
-        orderExportService = new OrderExportService();
     }
 
     private void initializeUI() {
@@ -55,7 +51,6 @@ public class MainFrame extends JFrame {
         cardLayout = new CardLayout();
         contentPanel = new JPanel(cardLayout);
 
-        // Add panels
         contentPanel.add(new LoginPanel(this), "LOGIN");
         contentPanel.add(new RegisterPanel(this), "REGISTER");
 
@@ -72,7 +67,6 @@ public class MainFrame extends JFrame {
     }
 
     public void showCustomerPanel() {
-        // Remove existing customer panel if any
         for (Component comp : contentPanel.getComponents()) {
             if (comp instanceof CustomerPanel) {
                 contentPanel.remove(comp);
@@ -85,7 +79,6 @@ public class MainFrame extends JFrame {
     }
 
     public void showAdminPanel() {
-        // Remove existing admin panel if any
         for (Component comp : contentPanel.getComponents()) {
             if (comp instanceof AdminPanel) {
                 contentPanel.remove(comp);
@@ -100,7 +93,6 @@ public class MainFrame extends JFrame {
     public void logout() {
         authService.logout();
 
-        // Remove customer and admin panels
         Component[] components = contentPanel.getComponents();
         for (Component comp : components) {
             if (comp instanceof CustomerPanel || comp instanceof AdminPanel) {
@@ -111,7 +103,6 @@ public class MainFrame extends JFrame {
         showLoginPanel();
     }
 
-    // Getters for services
     public AuthService getAuthService() {
         return authService;
     }
@@ -126,10 +117,6 @@ public class MainFrame extends JFrame {
 
     public OrderService getOrderService() {
         return orderService;
-    }
-
-    public OrderExportService getOrderExportService() {
-        return orderExportService;
     }
 
     public ProductRepository getProductRepository() {

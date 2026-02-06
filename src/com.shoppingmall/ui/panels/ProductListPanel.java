@@ -28,7 +28,7 @@ public class ProductListPanel extends JPanel {
     private void initializeUI() {
         setLayout(new BorderLayout());
 
-        // Search and filter panel
+
         JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
         controlPanel.add(new JLabel("Search:"));
@@ -57,7 +57,7 @@ public class ProductListPanel extends JPanel {
 
         add(controlPanel, BorderLayout.NORTH);
 
-        // Product grid
+
         productGridPanel = new JPanel(new GridLayout(0, 3, 10, 10));
         productGridPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
         JScrollPane scrollPane = new JScrollPane(productGridPanel);
@@ -101,7 +101,7 @@ public class ProductListPanel extends JPanel {
                 new EmptyBorder(10, 10, 10, 10)
         ));
 
-        // Image
+
         JLabel imageLabel = new JLabel();
         imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
         imageLabel.setPreferredSize(new Dimension(150, 150));
@@ -120,7 +120,7 @@ public class ProductListPanel extends JPanel {
         }
         card.add(imageLabel, BorderLayout.NORTH);
 
-        // Info panel
+
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
 
@@ -144,7 +144,7 @@ public class ProductListPanel extends JPanel {
 
         card.add(infoPanel, BorderLayout.CENTER);
 
-        // Add to cart button
+
         JPanel buttonPanel = new JPanel(new FlowLayout());
 
         JSpinner quantitySpinner = new JSpinner(new SpinnerNumberModel(1, 1, product.getStock(), 1));

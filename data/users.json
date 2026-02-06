@@ -16,5 +16,11 @@
     "password": "1234",
     "role": "CUSTOMER",
     "balance": 1000000.0
+  },
+  "Hadi": {
+    "username": "Hadi",
+    "password": "Hadi",
+    "role": "CUSTOMER",
+    "balance": 4.776E10
   }
 }

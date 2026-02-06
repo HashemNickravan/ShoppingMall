@@ -29,17 +29,19 @@ public class CartPanel extends JPanel {
     private void initializeUI() {
         setLayout(new BorderLayout());
 
+
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         balanceLabel = new JLabel();
         balanceLabel.setFont(new Font("Arial", Font.BOLD, 14));
         topPanel.add(balanceLabel);
         add(topPanel, BorderLayout.NORTH);
 
+
         String[] columns = {"Product", "Price", "Quantity", "Subtotal"};
         cartTableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return column == 2;
+                return false;
             }
 
             @Override
@@ -49,10 +51,10 @@ public class CartPanel extends JPanel {
         };
 
         cartTable = new JTable(cartTableModel);
-        cartTable.getColumnModel().getColumn(2)
-                .setCellEditor(new DefaultCellEditor(new JTextField()));
+
 
         add(new JScrollPane(cartTable), BorderLayout.CENTER);
+
 
         JPanel bottomPanel = new JPanel(new BorderLayout());
 
@@ -62,9 +64,7 @@ public class CartPanel extends JPanel {
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 
-        JButton updateButton = new JButton("Update Quantities");
-        updateButton.addActionListener(e -> handleUpdateQuantities());
-        buttonPanel.add(updateButton);
+
 
         JButton removeButton = new JButton("Remove Selected");
         removeButton.addActionListener(e -> handleRemoveItem());
@@ -110,26 +110,7 @@ public class CartPanel extends JPanel {
         totalLabel.setText(String.format("Total: %.2f Toman", total));
     }
 
-    private void handleUpdateQuantities() {
-        User user = mainFrame.getAuthService().getCurrentUser();
-        Cart cart = mainFrame.getCartService().getOrCreateCart(user.getUsername());
 
-        int index = 0;
-        for (String productId : cart.getItems().keySet()) {
-            Object value = cartTableModel.getValueAt(index, 2);
-            int quantity = Integer.parseInt(value.toString());
-
-            Product product = mainFrame.getProductService()
-                    .getProductById(productId).orElse(null);
-
-            if (product != null && quantity <= product.getStock()) {
-                mainFrame.getCartService()
-                        .updateCartItemQuantity(user.getUsername(), productId, quantity);
-            }
-            index++;
-        }
-        loadCart();
-    }
 
     private void handleRemoveItem() {
         int row = cartTable.getSelectedRow();
@@ -160,10 +141,21 @@ public class CartPanel extends JPanel {
         User user = mainFrame.getAuthService().getCurrentUser();
         Cart cart = mainFrame.getCartService().getOrCreateCart(user.getUsername());
 
+
+        if (cart.getItems().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Your cart is empty!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         double total = mainFrame.getCartService().calculateTotal(user.getUsername());
-        if (user.getBalance() < total) return;
+        if (user.getBalance() < total) {
+            JOptionPane.showMessageDialog(this, "Insufficient balance!", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
 
         mainFrame.getAuthService().updateUserBalance(user.getBalance() - total);
+
 
         for (String productId : cart.getItems().keySet()) {
             Product product = mainFrame.getProductService()
@@ -175,9 +167,12 @@ public class CartPanel extends JPanel {
             }
         }
 
+
         mainFrame.getOrderService().createOrder(user.getUsername(), cart);
         mainFrame.getCartService().clearCart(user.getUsername());
+
         loadCart();
         customerPanel.refreshOrders();
+        JOptionPane.showMessageDialog(this, "Order placed successfully!");
     }
 }

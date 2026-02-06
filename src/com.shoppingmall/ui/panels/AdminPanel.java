@@ -1,14 +1,12 @@
 package com.shoppingmall.ui.panels;
 
 import com.shoppingmall.model.*;
-import com.shoppingmall.service.*;
 import com.shoppingmall.ui.MainFrame;
 import com.shoppingmall.ui.dialogs.ProductFormDialog;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.io.IOException;
 import java.util.List;
 
 public class AdminPanel extends JPanel {
@@ -25,7 +23,6 @@ public class AdminPanel extends JPanel {
     private void initializeUI() {
         setLayout(new BorderLayout());
 
-        // Top panel with user info and logout
         JPanel topPanel = new JPanel(new BorderLayout());
         JLabel welcomeLabel = new JLabel("Admin Panel - Welcome " +
                 mainFrame.getAuthService().getCurrentUser().getUsername());
@@ -38,7 +35,7 @@ public class AdminPanel extends JPanel {
 
         add(topPanel, BorderLayout.NORTH);
 
-        // Tabbed pane
+
         JTabbedPane tabbedPane = new JTabbedPane();
         tabbedPane.addTab("Product Management", createProductManagementPanel());
         tabbedPane.addTab("All Orders", createOrdersPanel());
@@ -49,7 +46,7 @@ public class AdminPanel extends JPanel {
     private JPanel createProductManagementPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // Table
+
         String[] columns = {"ID", "Name", "Category", "Price", "Stock", "Image"};
         productTableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -61,7 +58,7 @@ public class AdminPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(productTable);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // Button panel
+
         JPanel buttonPanel = new JPanel(new FlowLayout());
 
         JButton addButton = new JButton("Add Product");
@@ -88,7 +85,7 @@ public class AdminPanel extends JPanel {
     private JPanel createOrdersPanel() {
         JPanel panel = new JPanel(new BorderLayout());
 
-        // Table
+
         String[] columns = {"Order ID", "Username", "Total Amount", "Date"};
         DefaultTableModel orderTableModel = new DefaultTableModel(columns, 0) {
             @Override
@@ -100,7 +97,7 @@ public class AdminPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(orderTable);
         panel.add(scrollPane, BorderLayout.CENTER);
 
-        // Load orders
+
         List<Order> orders = mainFrame.getOrderService().getAllOrders();
         for (Order order : orders) {
             orderTableModel.addRow(new Object[]{
@@ -111,18 +108,7 @@ public class AdminPanel extends JPanel {
             });
         }
 
-        // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout());
 
-        JButton exportCSVButton = new JButton("Export to CSV");
-        exportCSVButton.addActionListener(e -> handleExportOrders(ExportFormat.CSV));
-        buttonPanel.add(exportCSVButton);
-
-        JButton exportJSONButton = new JButton("Export to JSON");
-        exportJSONButton.addActionListener(e -> handleExportOrders(ExportFormat.JSON));
-        buttonPanel.add(exportJSONButton);
-
-        panel.add(buttonPanel, BorderLayout.SOUTH);
 
         return panel;
     }
@@ -185,28 +171,6 @@ public class AdminPanel extends JPanel {
             mainFrame.getProductService().deleteProduct(productId);
             loadProducts();
             JOptionPane.showMessageDialog(this, "Product deleted successfully!");
-        }
-    }
-
-    private void handleExportOrders(ExportFormat format) {
-        JFileChooser fileChooser = new JFileChooser();
-        fileChooser.setSelectedFile(new java.io.File(
-                "orders_export." + (format == ExportFormat.CSV ? "csv" : "json")));
-
-        if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
-            try {
-                List<Order> orders = mainFrame.getOrderService().getAllOrders();
-                mainFrame.getOrderExportService().exportOrders(
-                        orders,
-                        fileChooser.getSelectedFile().getAbsolutePath(),
-                        format);
-                JOptionPane.showMessageDialog(this, "Orders exported successfully!");
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(this,
-                        "Error exporting orders: " + ex.getMessage(),
-                        "Export Error",
-                        JOptionPane.ERROR_MESSAGE);
-            }
         }
     }
 
